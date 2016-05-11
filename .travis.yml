@@ -37,6 +37,11 @@ script:
     - go build
     - go test -v ./...
 
+sudo: required
+install:
+    - wget http://download.zeromq.org/zeromq-4.1.4.tar.gz
+    - tar -xvf zeromq-4.1.4.tar.gz
+    - cd zeromq-4.1.4 && ./autogen.sh && ./configure && make check && sudo make install && sudo ldconfig
 notifications:
     email:
         on_success: change
