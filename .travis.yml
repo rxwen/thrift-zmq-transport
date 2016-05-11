@@ -31,6 +31,6 @@ go:
 sudo: true
 
 script:
-    - apt-get install libzmq-dev
+    - apt-get install -y libzmq-dev
     - go build
     - go test -v ./...
