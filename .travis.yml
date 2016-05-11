@@ -42,8 +42,8 @@ script:
 sudo: required
 install:
     - pwd
-    - git clone git://github.com/jedisct1/libsodium.git && cd libsodium && git checkout stable && ./autogen.sh && ./configure && make check && sudo make install && sudo ldconfig && cd ..
-    - wget http://download.zeromq.org/zeromq-4.1.4.tar.gz && tar -xvf zeromq-4.1.4.tar.gz && cd zeromq-4.1.4 && ./autogen.sh && ./configure && make check && sudo make install && sudo ldconfig && cd ..
+    - git clone git://github.com/jedisct1/libsodium.git && cd libsodium && git checkout stable && ./autogen.sh && ./configure && sudo make install && sudo ldconfig && cd ..
+    - wget http://download.zeromq.org/zeromq-4.1.4.tar.gz && tar -xvf zeromq-4.1.4.tar.gz && cd zeromq-4.1.4 && ./autogen.sh && ./configure && sudo make install && sudo ldconfig && cd ..
 
 notifications:
     email:

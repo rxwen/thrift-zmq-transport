@@ -7,4 +7,4 @@ zmq [transport](https://github.com/apache/thrift/blob/master/lib/go/thrift/trans
 
 ## supported zmq socket
 
-- REQ / REP
+- DEALER / ROUTER
