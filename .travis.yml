@@ -28,10 +28,11 @@ language: go
 go:
     - "1.6"
 
-sudo: true
-
-install:
-    - apt-get install -y libzmq-dev
+addons:
+    apt:
+        packages:
+            - libzmq-dev
+install: true
 
 script:
     - go build
