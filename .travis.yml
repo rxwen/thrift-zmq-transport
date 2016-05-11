@@ -35,8 +35,9 @@ addons:
 
 script:
     - pwd
-    - cd $GOPATH
+    - cd $GOPATH/src/github.com/rxwen/thrift-zmq-transport
     - pwd
+    - go get ./...
     - go build
     - go test -v ./...
 
