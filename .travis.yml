@@ -34,9 +34,7 @@ addons:
             - libzmq3-dev
 
 script:
-    - pwd
     - cd $GOPATH/src/github.com/rxwen/thrift-zmq-transport
-    - pwd
     - go get ./...
     - go build
     - go test -v ./...
