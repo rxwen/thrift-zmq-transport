@@ -30,7 +30,9 @@ go:
 
 sudo: true
 
-script:
+install:
     - apt-get install -y libzmq-dev
+
+script:
     - go build
     - go test -v ./...
