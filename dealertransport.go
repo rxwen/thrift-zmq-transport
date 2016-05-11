@@ -3,7 +3,7 @@ package zmqtransport
 import (
 	"fmt"
 
-	zmq "github.com/pebbe/zmq3"
+	zmq "github.com/pebbe/zmq4"
 )
 
 // TDeleaerTransport is a TTransport implementation.
