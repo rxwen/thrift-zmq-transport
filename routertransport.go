@@ -2,7 +2,8 @@ package zmqtransport
 
 import (
 	"fmt"
-	zmq "github.com/pebbe/zmq4"
+
+	zmq "github.com/pebbe/zmq3"
 
 	"git.apache.org/thrift.git/lib/go/thrift"
 )
