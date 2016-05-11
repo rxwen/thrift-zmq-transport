@@ -28,8 +28,9 @@ language: go
 go:
     - "1.6"
 
-sudo: false
+sudo: true
 
 script:
+    - apt-get install libzmq-dev
     - go build
     - go test -v ./...
