@@ -31,9 +31,13 @@ go:
 addons:
     apt:
         packages:
-            - libzmq-dev
-install: true
+            - libzmq3-dev
 
 script:
     - go build
     - go test -v ./...
+
+notifications:
+    email:
+        on_success: change
+        on_failure: always
