@@ -50,6 +50,7 @@ func NewTRouterServerTransport(endpoint string) TRouterServerTransport {
 	go func() {
 		for {
 			msg, err := sock.RecvMessageBytes(0)
+			//fmt.Println("number of peers ", len(t.transports))
 			id := msg[0]
 			var transport TRouterTransport
 			if err == nil {
@@ -70,7 +71,13 @@ func NewTRouterServerTransport(endpoint string) TRouterServerTransport {
 				} else {
 					transport = trans
 				}
-				transport.cread <- buf
+				if len(buf) == 0 {
+					// received 0 bytes means close
+					fmt.Println("received EOL")
+					transport.Close()
+				} else {
+					transport.cread <- buf
+				}
 			}
 		}
 	}()

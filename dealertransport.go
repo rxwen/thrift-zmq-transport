@@ -32,7 +32,9 @@ func (t TDealerTransport) IsOpen() bool {
 }
 
 func (t TDealerTransport) Close() error {
-	//fmt.Println("Close")
+	fmt.Println("Close")
+	c := make([]byte, 0)
+	t.sock.SendBytes(c, 0) // send 0 bytes indicates close
 	return t.sock.Close()
 }
 
