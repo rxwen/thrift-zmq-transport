@@ -34,14 +34,14 @@ addons:
             - libzmq3-dev
 
 script:
-    - cd $GOPATH/src/github.com/rxwen/thrift-zmq-transport
+    - cd $BUILD_DIR
     - go get ./...
     - go build
     - go test -v ./...
 
 sudo: required
 install:
-    - pwd
+    - export BUILD_DIR=$(pwd)
     - git clone git://github.com/jedisct1/libsodium.git && cd libsodium && git checkout stable && ./autogen.sh && ./configure && sudo make install && sudo ldconfig && cd ..
     - wget http://download.zeromq.org/zeromq-4.1.4.tar.gz && tar -xvf zeromq-4.1.4.tar.gz && cd zeromq-4.1.4 && ./autogen.sh && ./configure && sudo make install && sudo ldconfig && cd ..
 
