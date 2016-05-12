@@ -132,6 +132,7 @@ func (t TRouterTransport) IsOpen() bool {
 
 func (t TRouterTransport) Close() error {
 	fmt.Println("TRouterTransport.Close")
+	t.cwrite <- WriteMessage{t.id, []byte{}} // send 0 bytes indicates close
 	delete(t.server.transports, string(t.id))
 	return nil
 }
