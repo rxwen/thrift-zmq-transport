@@ -13,7 +13,7 @@ type WriteMessage struct {
 	data []byte
 }
 
-// TRouterServerTransport is a TServerTransport implementation.
+// TRouterServerTransport is a zeromq Router based TServerTransport implementation.
 type TRouterServerTransport struct {
 	transports map[string]TRouterTransport
 	sock       *zmq.Socket
@@ -27,6 +27,7 @@ func NewTRouterServerTransport(endpoint string) TRouterServerTransport {
 	sock, err := zmq.NewSocket(zmq.ROUTER)
 
 	if err != nil {
+		panic(err.Error())
 	}
 
 	cwrite := make(chan WriteMessage, 100)
@@ -35,7 +36,7 @@ func NewTRouterServerTransport(endpoint string) TRouterServerTransport {
 		for {
 			msg := <-cwrite
 			sock.SendMessage(msg.id, msg.data)
-			fmt.Println("send ", msg)
+			//fmt.Println("send ", msg)
 		}
 	}()
 
@@ -48,30 +49,28 @@ func NewTRouterServerTransport(endpoint string) TRouterServerTransport {
 	}
 	go func() {
 		for {
-			id, err := sock.RecvBytes(0)
+			msg, err := sock.RecvMessageBytes(0)
+			id := msg[0]
 			var transport TRouterTransport
 			if err == nil {
-				buf, _ := sock.RecvBytes(0)
+				buf := msg[1]
 
 				if trans, ok := t.transports[string(id)]; !ok {
-					c := make(chan []byte, 1000)
+					cread := make(chan []byte, 100)
 					transport = TRouterTransport{
 						id:     id,
-						cread:  c,
+						cread:  cread,
 						cwrite: t.cwrite,
+						server: &t,
 					}
 					fmt.Println("create transport channel for", transport)
 
 					t.transports[string(id)] = transport
-					//fmt.Println("signal accept ", id, caccept)
 					caccept <- id
-					fmt.Println("signal accept ok", id)
 				} else {
 					transport = trans
 				}
-				//fmt.Println("put data to transport channel ", buf, transport)
 				transport.cread <- buf
-				//fmt.Println("put data to transport channel ok", buf, transport)
 			}
 		}
 	}()
@@ -80,7 +79,7 @@ func NewTRouterServerTransport(endpoint string) TRouterServerTransport {
 
 func (t TRouterServerTransport) Listen() error {
 	t.sock.Bind(t.endpoint)
-	fmt.Println("TRouterServerTransport.Listen")
+	fmt.Println("TRouterServerTransport.Listen ", t.endpoint)
 	return nil
 }
 
@@ -92,6 +91,14 @@ func (t TRouterServerTransport) Accept() (thrift.TTransport, error) {
 
 func (t TRouterServerTransport) Close() error {
 	fmt.Println("TRouterServerTransport.Close")
+
+	transports := make([]TRouterTransport, 0)
+	for _, trans := range t.transports {
+		transports = append(transports, trans)
+	}
+	for _, trans := range transports {
+		trans.Close()
+	}
 	return nil
 }
 
@@ -105,15 +112,8 @@ type TRouterTransport struct {
 	id     []byte
 	cread  chan []byte
 	cwrite chan WriteMessage
+	server *TRouterServerTransport
 }
-
-func (t TRouterTransport) GetMapKey() string {
-	return string(t.id)
-}
-
-//func NewTRouterTransport(c chan []byte) TRouterTransport {
-//return TRouterTransport{c: c}
-//}
 
 func (t TRouterTransport) Open() error {
 	return nil
@@ -124,34 +124,28 @@ func (t TRouterTransport) IsOpen() bool {
 }
 
 func (t TRouterTransport) Close() error {
+	fmt.Println("TRouterTransport.Close")
+	delete(t.server.transports, string(t.id))
 	return nil
 }
 
 func (t TRouterTransport) Read(buf []byte) (l int, err error) {
-	fmt.Println("TRouterTransport.Read wait, len ", len(buf), buf)
+	//fmt.Println("TRouterTransport.Read wait, len ", len(buf), buf)
 	data := <-t.cread
-	//fmt.Println("TRouterTransport.Read got, len ", len(data), data)
-	for i, b := range data {
-		buf[i] = b
-	}
-	fmt.Println("TRouterTransport.Read ", buf)
+	copy(buf, data)
 	return len(data), nil
-	//buf = <-t.cread
-	//return len(buf), nil
 }
 
 func (t TRouterTransport) Write(buf []byte) (int, error) {
 	data := make([]byte, len(buf))
-	for i, b := range buf {
-		data[i] = b
-	}
+	copy(data, buf)
 	msg := WriteMessage{
 		id:   t.id,
 		data: data,
 	}
 
 	t.cwrite <- msg
-	fmt.Println("write ", msg)
+	//fmt.Println("write ", msg)
 	return len(buf), nil
 }
 
@@ -160,6 +154,6 @@ func (p TRouterTransport) Flush() error {
 }
 
 func (p TRouterTransport) RemainingBytes() (num_bytes uint64) {
-	fmt.Println("RemainingBytes, hard code to 128")
-	return uint64(128)
+	//fmt.Println("RemainingBytes, hard code to 128")
+	return uint64(4096)
 }

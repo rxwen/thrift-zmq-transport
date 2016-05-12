@@ -32,38 +32,30 @@ func (t TDealerTransport) IsOpen() bool {
 }
 
 func (t TDealerTransport) Close() error {
-	fmt.Println("Close")
+	//fmt.Println("Close")
 	return t.sock.Close()
 }
 
 func (t TDealerTransport) Read(buf []byte) (l int, err error) {
-	fmt.Println("about to Read num of bytes ", len(buf))
+	//fmt.Println("about to Read num of bytes ", len(buf))
 	data, err := t.sock.RecvBytes(0)
 	//fmt.Println("received num of bytes ", len(data), data)
-	l = 0
-	for i, b := range data {
-		if i < len(buf) {
-			l = i + 1
-			buf[i] = b
-		} else {
-			break
-		}
-	}
-	//fmt.Println("Read", buf, err)
+	l = len(data)
+	copy(buf, data)
 	return l, err
 }
 
 func (t TDealerTransport) Write(buf []byte) (int, error) {
-	fmt.Println("Write ", buf)
+	//fmt.Println("Write ", buf)
 	return t.sock.SendBytes(buf, 0)
 }
 
 func (p TDealerTransport) Flush() error {
-	fmt.Println("Flush")
+	//fmt.Println("Flush")
 	return nil
 }
 
 func (p TDealerTransport) RemainingBytes() (num_bytes uint64) {
-	fmt.Println("RemainingBytes, hard code to 128")
-	return uint64(128)
+	//fmt.Println("RemainingBytes, hard code to 128")
+	return uint64(4096)
 }
