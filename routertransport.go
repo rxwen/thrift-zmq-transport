@@ -22,6 +22,7 @@ type TRouterServerTransport struct {
 	caccept    chan []byte
 }
 
+// NewTRouterServerTransport function instantiates a new TRouterServerTransport to specified endpoint
 func NewTRouterServerTransport(endpoint string) TRouterServerTransport {
 	fmt.Println("new TRouterServerTransport")
 	sock, err := zmq.NewSocket(zmq.ROUTER)
