@@ -51,7 +51,7 @@ func NewTRouterServerTransport(endpoint string) TRouterServerTransport {
 	go func() {
 		for {
 			msg, err := sock.RecvMessageBytes(0)
-			//fmt.Println("number of peers ", len(t.transports))
+			fmt.Println("number of peers ", len(t.transports))
 			id := msg[0]
 			var transport TRouterTransport
 			if err == nil {
