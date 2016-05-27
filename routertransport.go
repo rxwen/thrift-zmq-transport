@@ -72,13 +72,7 @@ func NewTRouterServerTransport(endpoint string) TRouterServerTransport {
 				} else {
 					transport = trans
 				}
-				if len(buf) == 0 {
-					// received 0 bytes means close
-					fmt.Println("received EOL")
-					transport.Close()
-				} else {
-					transport.cread <- buf
-				}
+				transport.cread <- buf
 			}
 		}
 	}()
@@ -133,7 +127,7 @@ func (t TRouterTransport) IsOpen() bool {
 
 func (t TRouterTransport) Close() error {
 	fmt.Println("TRouterTransport.Close")
-	t.cwrite <- WriteMessage{t.id, []byte{}} // send 0 bytes indicates close
+	//t.cwrite <- WriteMessage{t.id, []byte{}} // send 0 bytes indicates close
 	delete(t.server.transports, string(t.id))
 	return nil
 }

@@ -37,7 +37,7 @@ func (t TDealerTransport) IsOpen() bool {
 // Close method shuts down the zmq socket.
 func (t TDealerTransport) Close() error {
 	fmt.Println("Close")
-	t.sock.SendBytes([]byte{}, 0) // send 0 bytes indicates close
+	//t.sock.SendBytes([]byte{}, 0) // send 0 bytes indicates close
 	return t.sock.Close()
 }
 
